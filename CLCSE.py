@@ -153,7 +153,6 @@ class CLCSE():
         return Cw_prime
     
           
-# 创建 CLCSE 实例并获取参数
 group = PairingGroup('SS512')
 clcse = CLCSE(group)
 attr1_list = ['0', '1', '2', '3', '4', '5']
