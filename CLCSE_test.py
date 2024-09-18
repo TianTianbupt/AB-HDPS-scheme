@@ -13,12 +13,12 @@ def main():
     Test_Trapdoor = True
     Test_Test = True
     # instantiate a bilinear pairing map
-    group = PairingGroup('MNT224')
+    group = PairingGroup('SS512')
     
     clcse = CLCSE(group)
     PP, params2, msk = clcse.Setup()
     PK_o, SK_o = clcse.KeyGen1(PP, msk)
-    PK_j, SK_j, public_keys = clcse.KeyGen2(params2)
+    PK_j, SK_j = clcse.KeyGen2(params2)
     Cw = clcse.Encryption(PP, params2, PK_o, SK_o, attr1_list, attrm_list)
     Tw = clcse.Trapdoor(Cw, PP, PK_o, SK_j, attr2_list)
 
@@ -35,15 +35,14 @@ def main():
                 Temp = 0
                 start = 0
                 end = 0
-                
-                for i in range(d): 
-                    for i in range(trial):
-                        start = time.time()
-                        PK_o, SK_o = clcse.KeyGen1(PP, msk)
-                        end = time.time()
-                        Temp = end - start
-                        T += Temp
-                    T = T / trial  
+                 
+                for i in range(trial):
+                    start = time.time()
+                    PK_o, SK_o = clcse.KeyGen1(PP, msk)
+                    end = time.time()
+                    Temp = end - start
+                    T += Temp
+                T = T / trial  
                 
                 f.write(str(T) + ")\n")
                 d += 10
@@ -54,7 +53,7 @@ def main():
     if Test_KeyGen2:
             d=10      
             NN = 50
-            print ("Match Bench")
+            print ("KeyGen2 Bench")
             f = open('KeyGen2.txt', 'w+')
             while d <= NN:
                 print(d)
@@ -63,15 +62,14 @@ def main():
                 Temp = 0
                 start = 0
                 end = 0
-                
-                for i in range(d): 
-                    for i in range(trial):
-                        start = time.time()
-                        PK_j, SK_j, public_keys = clcse.KeyGen2(params2)
-                        end = time.time()
-                        Temp = end - start
-                        T += Temp
-                    T = T / trial  
+                 
+                for i in range(trial):
+                    start = time.time()
+                    PK_j, SK_j = clcse.KeyGen2(params2)
+                    end = time.time()
+                    Temp = end - start
+                    T += Temp
+                T = T / trial  
                 
                 f.write(str(T) + ")\n")
                 d += 10
