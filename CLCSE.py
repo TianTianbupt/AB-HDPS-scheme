@@ -1,6 +1,5 @@
 from charm.toolbox.pairinggroup import PairingGroup, ZR, G1, G2, GT,pair
 from charm.toolbox.secretutil import SecretUtil
-from charm.toolbox.PREnc import PREnc
 from charm.toolbox.hash_module import Hash, int2Bytes, integer
 import time
 
@@ -43,21 +42,16 @@ class CLCSE():
         PK_o = {'T_o': T_o, 'PPK_o': PPK_o, 'eta_o': eta_o}
         SK_o = {'u_o': u_o, 'd_o': d_o}
 
-
         return PK_o,SK_o 
 
      
      
     def KeyGen2(self, params2):
-        d=10
-        public_keys = []
-        for i in range (d):
-            d_r = self.group.random(ZR) 
-        
-            PK_j = params2['P2']**d_r
-            SK_j = d_r
-            public_keys.append(PK_j)
-        return PK_j, SK_j, public_keys
+         d_r = self.group.random(ZR) 
+         PK_j = params2['P2']**d_r
+         SK_j = d_r
+       
+        return PK_j, SK_j
      
      
      
@@ -77,7 +71,7 @@ class CLCSE():
            
         input1_data = PK_o ['T_o']
         input2_data = PK_o ['PPK_o']
-        gdata = self.group.random(G1)
+        gdata = self.group.random(ZR)
         fx_i = PP['H4'](gdata) 
         for  i in range(100):
             fx_i = PP['H4'](fx_i)
@@ -141,7 +135,7 @@ class CLCSE():
            
         input1_data = PK_o ['T_o']
         input2_data = PK_o ['PPK_o']
-        gdata = self.group.random(G1)
+        gdata = self.group.random(ZR)
         fx_i = PP['H4'](gdata)
         t = 5
         if t <= 0 or t > len(attrm_list):
@@ -160,7 +154,7 @@ class CLCSE():
     
           
 # 创建 CLCSE 实例并获取参数
-group = PairingGroup('MNT224')
+group = PairingGroup('SS512')
 clcse = CLCSE(group)
 attr1_list = ['0', '1', '2', '3', '4', '5']
 attr2_list = ['0', '1', '2', '3', '4', '5']
@@ -168,11 +162,9 @@ attrm_list = []
 
 PP, params2, msk = clcse.Setup()
 PK_o, SK_o = clcse.KeyGen1(PP, msk)
-PK_j, SK_j, public_keys = clcse.KeyGen2(params2)
+PK_j, SK_j = clcse.KeyGen2(params2)
 Cw = clcse.Encryption(PP, params2, PK_o, SK_o, attr1_list, attrm_list)
 Tw = clcse.Trapdoor(Cw, PP, PK_o, SK_j, attr2_list)
-PK_o, SK_o = clcse.KeyGen1(PP, msk)
-PK_j, SK_j, public_keys = clcse.KeyGen2(params2)
 (TEST1,TEST2) = clcse.Test(Tw, Cw, PK_j) 
 Cw_prime = clcse.FileInsert(PP, params2, PK_o, SK_o, attr1_list, attrm_list)
 
