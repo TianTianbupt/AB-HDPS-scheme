@@ -61,7 +61,6 @@ class ABDEC():
         """
         The following   calculation can be calculated offline.
         """
-        o=1
         d = 4
         O = {}
         for  attr  in   attr_list:
@@ -158,23 +157,25 @@ class ABDEC():
     
     
         
-    def ReEncryption(self, params,  policy_str, O, CF):
-    
+    def ReEncryption(self, params, policy_str, PK):
         policy = self.util.createPolicy(policy_str)
         attribute_list = self.util.getAttributeList(policy)
-        C1_prim, C2_prim, C3_prim = {}, {}, {}
-        C1_prim =  CF['C1']
-        C2_prim =  CF['C2']
-        for attr in attribute_list:
-            r_attr1 = self.group.random(ZR)
-            r_attr2 = self.group.random(ZR)
-            if attr in O:
-                C3_prim[attr] = O[attr] ** (-r_attr1 * r_attr2) 
-            else:
-                print(f"Warning: Attribute {attr} not found in O")
-           
-        CF_prim = {'policy': policy_str,  'C1_prim': C1_prim, 'C2_prim': C2_prim, 'C3_prim': C3_prim}
+        d_prim = 5
+        O_prim, C3_prim = {}, {}
         
+        for attr in attribute_list:
+            A_prim_i = self.group.random(ZR)
+            R_prim_il =PK['PK_1'] ** A_prim_i
+            R_prim_i1 = params['g'] ** A_prim_i
+            for  l  in   range(d_prim):
+                temp = R_prim_il
+                R_prim_il= pair(R_prim_i1,params['h2'](temp))
+            O_prim[attr] = params['h2'](R_prim_il)     
+            r_i1 = self.group.random(ZR)
+            r_i2 = self.group.random(ZR)
+            C3_prim[attr] = O_prim[attr] ** (-r_i1 * r_i2) 
+        CF_prim = {'policy': policy_str, 'C3_prim': C3_prim}
+    
         return CF_prim
     
     
@@ -189,5 +190,5 @@ policy_str = '( 537652053081268538405298426501177745558478376277 and 66553248058
 (CF ,s) = abdec.Encryption(params, ck, PK,  policy_str,  O)
 ( Z) = abdec.PreDe(CF, params, ak)
 (decrypted_message) = abdec.Decryption(CF, params, ak, du, Z)
-(CF_prim) = abdec.ReEncryption( params,  policy_str, O, CF)
+(CF_prim) = abdec.ReEncryption( params,  policy_str, PK)
 print("decrypted_message", decrypted_message)
