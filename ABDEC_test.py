@@ -3,7 +3,7 @@ from charm.toolbox.pairinggroup import PairingGroup, ZR, G1, G2, GT,pair
 from charm.toolbox.secretutil import SecretUtil
 from charm.toolbox.hash_module import Hash, int2Bytes, integer
 import math
-from ABDEC0829 import ABDEC
+from ABDEC import ABDEC
 import time
 
 def main():
@@ -27,7 +27,7 @@ def main():
         d=10      
         NN = 50
         print ("PKISetup Bench")
-        f = open('PKISetup0909.txt', 'w+')
+        f = open('PKISetup.txt', 'w+')
         while d <= NN:
             print(d)
             f.write("(" + str(d) + ",")
@@ -56,7 +56,7 @@ def main():
         d=10      
         NN = 50
         print ("KeyGen Bench")
-        f = open('Keygen0909.txt', 'w+')
+        f = open('Keygen.txt', 'w+')
         while d <= NN:
             print(d)
             f.write("(" + str(d) + ",")
@@ -90,7 +90,7 @@ def main():
         d=10     
         NN = 50
         print ("Encrypt Bench")
-        f = open('Encrypt0909.txt', 'w+')
+        f = open('Encrypt.txt', 'w+')
         while d <= NN:
             f.write("(" + str(d) + ",")
             T = 0
@@ -125,7 +125,7 @@ def main():
         d=10     
         NN = 50
         print ("Decrypt Bench")
-        f = open('decrypt0909.txt', 'w+')
+        f = open('decrypt.txt', 'w+')
         while d < NN:
             f.write("(" + str(d) + ",")
             T = 0
@@ -162,12 +162,11 @@ def main():
         
     policy_str = '( 537652053081268538405298426501177745558478376277 and 665532480585348179794866828126495254730776514361 ) OR ( 9160528266715565656600774122297260167147113869 and 603517283893112572826815108813007875548551170107 )'
     ( O, ak, PK,  du) = abdec.KeyGen(params, attr_list)
-    (CF ,s) = abdec.Encryption(params, ck, PK, policy_str,  O)
     if Test_ReEncryption:
         d=10     
         NN = 50
         print ("ReEncryption Bench")
-        f = open('ReEncryption0909.txt', 'w+')
+        f = open('ReEncryption.txt', 'w+')
         while d <= NN:
             f.write("(" + str(d) + ",")
             T = 0
@@ -187,7 +186,7 @@ def main():
             (CF ,s) = abdec.Encryption(params, ck, PK, policy_str,  O)
             for i in range(trial):
                 start = time.time()
-                (CF_prim) = abdec.ReEncryption(params, CF,  policy_str,  O)
+                (CF_prim) = abdec.ReEncryption(params, policy_str, PK)
                 end = time.time()
                 Temp = end - start
                 T += Temp
